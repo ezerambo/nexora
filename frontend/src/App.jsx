@@ -1,6 +1,30 @@
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
+  const [backendStatus, setBackendStatus] = useState("Comprobando conexión...");
+
+  useEffect(() => {
+    fetch("/api/health")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en el servidor");
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setBackendStatus("NEXORA conectado correctamente");
+        } else {
+          setBackendStatus("No se pudo conectar con NEXORA");
+        }
+      })
+      .catch(() => {
+        setBackendStatus("Backend no disponible");
+      });
+  }, []);
+
   return (
     <div className="app">
       <header className="navbar">
@@ -52,6 +76,9 @@ function App() {
             <div className="idea-help">
               <span>¿No tenés una idea todavía?</span>
               <button>Encontrar una oportunidad →</button>
+            </div>
+            <div className="backend-status">
+              {backendStatus}
             </div>
           </div>
 
