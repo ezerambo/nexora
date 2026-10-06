@@ -50,6 +50,22 @@ app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: "Ruta no encontrada",
+    path: req.originalUrl,
+  });
+});
+
+// Sistema global de errores
+app.use((err, req, res, next) => {
+  console.error("Error interno de NEXORA:", err);
+
+  const statusCode = err.statusCode || 500;
+
+  res.status(statusCode).json({
+    success: false,
+    message:
+      statusCode === 500
+        ? "Error interno del servidor"
+        : err.message || "Ocurrió un error",
   });
 });
 
